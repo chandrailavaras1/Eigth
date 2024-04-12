@@ -1,31 +1,30 @@
 pipeline {
     agent any
     tools {
-        maven 'Maven'
-        jdk 'JDK17'
+        maven "Maven"
+        jdk "JDK17"
     }
-    environment {
-        TOMCAT_CREDS = credentials('tomcat_credentials') // jenkins credentials
+    environment{
+        TOMCAT_CREDS = credentials ("tomcat_creds")
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "34.125.79.139:8081"
-        NEXUS_REPO = "new-repo-test"
+        NEXUS_URL = "34.16.179.184:8081"
+        NEXUS_REPO = "chandu-repo"
     }
-    stages {
-        stage ('clone'){
-            steps {
-                // clone the repo, go to snippet generator
-                git credentialsId: 'github_creds', url: 'https://github.com/devopswithcloud/spring3-mvc-maven-xml-hello-world.git'
+    stages{
+        stage("clone"){
+            steps{
+                git credentialsId: 'github_creds', url: 'https://github.com/chandrailavaras1/spring3-mvc-maven-xml-hello-world.git'
+                echo "Cloning the repo"
             }
         }
-        stage ('Build') {
-            steps {
+        stage("Build"){
+            steps{
                 sh "mvn clean package -Dmaven.test.failure.ignore=true"
-                //-Dcheckstyle.skip
             }
             post {
-                success {
-                    archiveArtifacts artifacts: 'target/*.war', followSymlinks: false
+                success{
+                    archiveArtifacts artifacts: "target/*.war", followSymlinks: false
                 }
             }
         }
